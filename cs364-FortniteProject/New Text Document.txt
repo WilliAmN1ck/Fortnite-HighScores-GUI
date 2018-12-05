@@ -1,0 +1,94 @@
+DB QUERIES:
+PRAGMA foreign_keys = 0;
+
+CREATE TABLE EpicLifetimeStats (
+    EpicUsername  TEXT           PRIMARY KEY
+                                 UNIQUE,
+    AccountId     TEXT,
+    Top5s         INTEGER,
+    Top3s         INTEGER,
+    Top6s         INTEGER,
+    Top10         INTEGER,
+    Top12s        INTEGER,
+    Top25s        INTEGER,
+    Score         INTEGER,
+    MatchesPlayed INTEGER,
+    Wins          INTEGER,
+    [Win%]        NUMERIC (5, 2),
+    Kills         INTEGER,
+    Kd            NUMERIC (5, 2) 
+);
+
+INSERT INTO EpicLifetimeStats (
+                                  EpicUsername,
+                                  AccountId,
+                                  Top5s,
+                                  Top3s,
+                                  Top6s,
+                                  Top10,
+                                  Top12s,
+                                  Top25s,
+                                  Score,
+                                  MatchesPlayed,
+                                  Wins,
+                                  [Win%],
+                                  Kills,
+                                  Kd
+                              )
+                              SELECT EpicUsername,
+                                     AccountId,
+                                     Top5s,
+                                     Top3s,
+                                     Top6s,
+                                     Top10,
+                                     Top12s,
+                                     Top25s,
+                                     Score,
+                                     MatchesPlayed,
+                                     Wins,
+                                     "Win%",
+                                     Kills,
+                                     Kd
+                                FROM EpicLifetimeStats;
+
+CREATE TABLE User (
+    DbUsername TEXT PRIMARY KEY
+                    UNIQUE,
+    AccountId  TEXT,
+    DbPassword TEXT
+);
+CREATE TABLE [User-Account] (
+    DbUsername      PRIMARY KEY
+                    REFERENCES User (DbUsername),
+    AccountIds TEXT
+);
+CREATE TABLE RecentMatches (
+    EpicUsername  TEXT           PRIMARY KEY
+                                 REFERENCES EpicLifetimeStats (EpicUsername),
+    matchId       TEXT,
+    DateCollected TEXT,
+    Kills         INTEGER,
+    Matches       INTEGER,
+    Score         INTEGER,
+    Playlist      STRING,
+    TrnRating     NUMERIC (7, 2),
+    top1          INTEGER
+);
+CREATE TABLE GameModeStats (
+    EpicUsername  STRING         PRIMARY KEY
+                                 REFERENCES EpicLifetimeStats (EpicUsername),
+    GameMode      TEXT,
+    Score         INTEGER,
+    Top1          INTEGER,
+    Top3          INTEGER,
+    Top6          INTEGER,
+    Top12         INTEGER,
+    Top25         INTEGER,
+    Deaths        INTEGER,
+    Kills         INTEGER,
+    Matches       INTEGER,
+    WinRatio      NUMERIC (5, 2),
+    ScorePerMatch NUMERIC (7, 2),
+    Kd            NUMERIC (5, 2),
+    KillsPerGame  NUMERIC (5, 2) 
+);
